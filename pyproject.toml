@@ -5,10 +5,13 @@ description = "fast-api bootstrap for senza"
 authors = ["josh s wilkinson <joshswilkinson@pm.me>"]
 readme = "README.md"
 
+packages = [{ include = "routers" }]
+
 [tool.poetry.dependencies]
 python = ">3.11,<4.0"
 fastapi = "^0.111.0"
 websockets = "^12.0"
+uvicorn = { extras = ["standard"], version = "^0.30.1" }
 
 [tool.poetry.group.dev.dependencies]
 black = "^24.4.2"
@@ -21,3 +24,4 @@ build-backend = "poetry.core.masonry.api"
 [tool.poetry.scripts]
 start = 'main:server.run'
 compile_sass = 'scripts.compile_sass:compile_sass'
+compile_pyscript = 'scripts.compile_pyscript:compile_pyscript'

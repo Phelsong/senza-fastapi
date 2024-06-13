@@ -13,35 +13,33 @@ from routers.nav import nav
 
 
 # =============================================================================
-server_config: UV_Config
-# print(os.environ.get("SITE_ENV"))
+# print(os.environ.get("SITE_ENV")
+server_config: UV_CONFIG = UV_CONFIG(
+    app="main:app", host="0.0.0.0", port=8047, root_path="."
+)
 
-if os.environ.get("SITE_ENV") == "PRODUCTION":
-    server_config = UV_Config(
-        app="main:app",
-        host="0.0.0.0",
-        port=8062,
-        root_path=".",
-        workers=5,
-        log_level="info",
-    )
-else:
-    server_config = UV_Config(
-        app="main:app",
-        host="0.0.0.0",
-        port=8062,
-        root_path=".",
-        log_level="debug",
-        workers=5,
-        ssl_certfile="./certs/dev-cert.pem",
-        ssl_keyfile="./certs/dev-key.pem",
-    )
+site_env = os.environ.get("SITE_ENV")
+match site_env:
+    case "PRODUCTION":
+        server_config.log_level = "info"
+        server_config.headers.append(("Cache-Control", "must-revalidate"))
+        server_config.workers = 8
+    case _:
+        server_config.reload = True
+        server_config.log_level = "trace"
+        server_config.ssl_certfile = "./certs/cert.pem"
+        server_config.ssl_keyfile = "./certs/key.pem"
+        # Starlette/FastApi etag implementation is actually working, this keeps client assets from caching indefinitely
+        server_config.headers.append(("Cache-Control", "must-revalidate"))
+        # server_config.headers.append(("Pragma", "no-cache"))
+        server_config.workers = 16
+
 
 server: UV_Server = UV_Server(server_config)
 
 
 app = FastAPI(root_path=".")
-origins: list[str] = ["http://localhost", "http://127.0.0.1", "http://[::]", "*"]
+origins: list[str] = ["http://localhost", "http://127.0.0.1", "http://[::]"]
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
