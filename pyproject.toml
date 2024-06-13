@@ -1,0 +1,23 @@
+[tool.poetry]
+name = "senza-fastapi"
+version = "0.1.0"
+description = "fast-api bootstrap for senza"
+authors = ["josh s wilkinson <joshswilkinson@pm.me>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">3.11,<4.0"
+fastapi = "^0.111.0"
+websockets = "^12.0"
+
+[tool.poetry.group.dev.dependencies]
+black = "^24.4.2"
+tomli-w = "^1.0.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+start = 'main:server.run'
+compile_sass = 'scripts.compile_sass:compile_sass'
