@@ -1,12 +1,6 @@
-import subprocess
 from utils import project_root
+import os
 
 
 def compile_sass():
-    subprocess.run(
-        [
-            "sass",
-            f"{project_root}/sass/index.sass",
-            f"{project_root}/public/index.css",
-        ]
-    )
+    os.system(f"sass {project_root}/sass/index.sass {project_root}/public/index.css")

@@ -89,13 +89,13 @@ def get_home() -> HTMLResponse:
     <!-- ============================================================ -->
     <link defer rel="stylesheet" href="/public/index.css" />
     <link defer rel="stylesheet" href="https://pyscript.net/releases/2024.6.1/core.css">
-    <script defer type="module" src="/public/pyscript/core.js"></script>
+    <script async defer type="module" src="/public/pyscript/core.js"></script>
     <!-- ============================================================ -->
     <title>Pyscript App</title>
   </head>
   <body>
     <!-- ============================================================ -->
-   <script type='py' src='/web/app.py' config='/web/config.toml'></script>
+   <script async type='py' src='/web/app.py' config='/web/config.toml'></script>
         </body>
         </html>
     """

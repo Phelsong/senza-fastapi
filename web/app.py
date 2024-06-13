@@ -18,3 +18,4 @@ async def main() -> None:
 
 
 ensure_future(main())
+# await main()
