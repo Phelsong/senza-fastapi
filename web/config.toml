@@ -1,4 +1,4 @@
-packages = []
+packages = ["orjson"]
 version = "0.1.1"
 interpreter = "https://cdn.jsdelivr.net/pyodide/dev/full/pyodide.mjs"
 

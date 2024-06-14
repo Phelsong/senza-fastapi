@@ -1,6 +1,6 @@
 # libs
 import os
-from uvicorn import Server as UV_Server, Config as UV_Config
+from uvicorn import Server as UV_SERVER, Config as UV_CONFIG
 from fastapi import FastAPI, WebSocket
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
@@ -15,7 +15,7 @@ from routers.nav import nav
 # =============================================================================
 # print(os.environ.get("SITE_ENV")
 server_config: UV_CONFIG = UV_CONFIG(
-    app="main:app", host="0.0.0.0", port=8047, root_path="."
+    app="main:app", host="0.0.0.0", port=8062, root_path="."
 )
 
 site_env = os.environ.get("SITE_ENV")
@@ -35,7 +35,7 @@ match site_env:
         server_config.workers = 16
 
 
-server: UV_Server = UV_Server(server_config)
+server: UV_SERVER = UV_SERVER(server_config)
 
 
 app = FastAPI(root_path=".")
@@ -104,7 +104,7 @@ def get_home() -> HTMLResponse:
 
 
 @app.websocket("/ws")
-async def websocket_text(websocket: WebSocket):
+async def ws_test(websocket: WebSocket):
     await websocket.accept()
     while True:
         # data = await websocket.receive_text()

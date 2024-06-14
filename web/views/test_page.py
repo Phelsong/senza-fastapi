@@ -1,7 +1,7 @@
 from pyscript import when
 from pyscript.web.elements import Element
 from senza.components import Div, Button
-from senza.websocket import SWS
+from senza.websocket import SenzaSocket
 
 
 async def test_page(parent: Element):
@@ -13,7 +13,7 @@ async def test_page(parent: Element):
     stop_button = Button(test_container, "ws-stop-button")
 
     url = "wss://local.dev:8062/ws"
-    ws = SWS(url)
+    ws = SenzaSocket(url)
 
     # @when("mousedown", send_button)
     # async def button_receive_text(event):
