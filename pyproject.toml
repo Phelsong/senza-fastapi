@@ -25,3 +25,15 @@ build-backend = "poetry.core.masonry.api"
 start = 'main:server.run'
 compile_sass = 'scripts.compile_sass:compile_sass'
 compile_pyscript = 'scripts.compile_pyscript:compile_pyscript'
+
+[tool.pixi.workspace]
+channels = ["conda-forge"]
+platforms = ["linux-64"]
+
+[tool.pixi.pypi-dependencies]
+senza-fastapi = { path = ".", editable = true }
+
+[tool.pixi.tasks]
+start = "python main.py"
+compile_sass = "sass ./sass/index.sass ./public/index.css"
+compile_pyscript = "python scripts/compile_pyscript.py"

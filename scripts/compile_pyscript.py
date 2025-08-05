@@ -2,21 +2,27 @@ from utils import project_root
 import os
 import shutil
 
-# Install dependencies (if needed)
-os.chdir(os.path.join(project_dir, "build", "pyscript", "pyscript.core"))
-os.system("npm install")
 
-# Build the project
-os.chdir(os.path.join(project_dir, "build", "pyscript"))
-os.system("make build")
+def compile_pyscript():
+    # Install dependencies (if needed)
+    os.chdir(os.path.join(project_dir, "build", "pyscript", "pyscript.core"))
+    os.system("npm install")
 
-# Check if the 'pyscript' package exists
-test_pyscript = os.path.exists(os.path.join(project_dir, "packages", "pyscript"))
-if test_pyscript:
-    shutil.rmtree(os.path.join(project_dir, "packages", "pyscript"))
+    # Build the project
+    os.chdir(os.path.join(project_dir, "build", "pyscript"))
+    os.system("make build")
 
-# Copy the built files
-shutil.copytree(
-    os.path.join(project_dir, "build", "pyscript", "pyscript.core", "dist"),
-    os.path.join(project_dir, "packages", "pyscript"),
-)
+    # Check if the 'pyscript' package exists
+    test_pyscript = os.path.exists(os.path.join(project_dir, "packages", "pyscript"))
+    if test_pyscript:
+        shutil.rmtree(os.path.join(project_dir, "packages", "pyscript"))
+
+    # Copy the built files
+    shutil.copytree(
+        os.path.join(project_dir, "build", "pyscript", "pyscript.core", "dist"),
+        os.path.join(project_dir, "packages", "pyscript"),
+    )
+
+
+if __name__ == "__main__":
+    compile_pyscript()
