@@ -1,10 +1,10 @@
 from pyscript import when
-from pyscript.web.elements import Element
+from pyscript.web import Element
 from senza.components import Div, Button
 from senza.websocket import SenzaSocket
 
 
-async def test_page(parent: Element):
+async def test_page(parent: Element) -> Div:
     """test"""
 
     test_container = Div(parent, "test-div", inner_text="hello world")

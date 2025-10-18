@@ -1,10 +1,12 @@
 #!pyscript
 # libs
 from asyncio import ensure_future
+from pyscript import config
+from pyscript.web import page
 
 # imports
 from senza.dom_router import dom_router
-from web.context import site
+from senza.context import site
 from web.views.test_page import test_page
 
 

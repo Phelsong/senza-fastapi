@@ -39,7 +39,13 @@ server: UV_SERVER = UV_SERVER(server_config)
 
 
 app = FastAPI(root_path=".")
-origins: list[str] = ["http://localhost", "http://127.0.0.1", "http://[::]"]
+origins: list[str] = [
+    "http://localhost",
+    "http://127.0.0.1",
+    "http://[::]",
+    "https://dev.local",
+    "*",
+]
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
@@ -86,8 +92,8 @@ def get_home() -> HTMLResponse:
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- ============================================================ -->
     <link defer rel="stylesheet" href="/public/index.css" />
-    <link defer rel="stylesheet" href="https://pyscript.net/releases/2024.6.1/core.css">
-    <script async defer type="module" src="/public/pyscript/core.js"></script>
+    <link defer rel="stylesheet" href="https://pyscript.net/releases/2024.8.1/core.css">
+    <script async defer type="module" src="https://pyscript.net/releases/2024.8.1/core.js"></script>
     <!-- ============================================================ -->
     <title>Pyscript App</title>
   </head>

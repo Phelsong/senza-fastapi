@@ -7,7 +7,7 @@ interpreter = "https://cdn.jsdelivr.net/pyodide/dev/full/pyodide.mjs"
 autoclose = true
 
 [[fetch]]
-from = "https://local.dev:8062/"
+from = "https://dev.local:8062/"
 files = [
     "senza/components/__init__.py",
     "senza/components/abase.py",
@@ -28,9 +28,9 @@ files = [
     "senza/components/select.py",
     "senza/components/svg.py",
     "senza/components/span.py",
+    "senza/context.py",
     "senza/dom_router.py",
     "senza/websocket.py",
-    "web/context.py",
     "web/app.py",
     "web/views/test_page.py",
 ]
