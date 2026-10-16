@@ -1,36 +1,14 @@
+version = "0.3.0"
 packages = ["orjson"]
-version = "0.1.1"
-interpreter = "https://cdn.jsdelivr.net/pyodide/dev/full/pyodide.mjs"
+interpreter = "https://cdn.jsdelivr.net/pyodide/v0.29.5/full/pyodide.mjs"
 
-
-[splashscreen]
-autoclose = true
-
-[[fetch]]
-from = "https://dev.local:8062/"
-files = [
-    "senza/components/__init__.py",
-    "senza/components/abase.py",
-    "senza/components/div.py",
-    "senza/components/anchor.py",
-    "senza/components/button.py",
-    "senza/components/form.py",
-    "senza/components/img.py",
-    "senza/components/input.py",
-    "senza/components/label.py",
-    "senza/components/h1.py",
-    "senza/components/h2.py",
-    "senza/components/h3.py",
-    "senza/components/h4.py",
-    "senza/components/h5.py",
-    "senza/components/h6.py",
-    "senza/components/ptag.py",
-    "senza/components/select.py",
-    "senza/components/svg.py",
-    "senza/components/span.py",
-    "senza/context.py",
-    "senza/dom_router.py",
-    "senza/websocket.py",
-    "web/app.py",
-    "web/views/test_page.py",
-]
+[files]
+"{SENZA}" = "/packages"
+"{FROM}" = "/pyscript-source"
+"{FROM}/web/app.py" = "./web/app.py"
+"{FROM}/web/queries.py" = "./web/queries.py"
+"{FROM}/web/views/hello.py" = "./web/views/hello.py"
+"{FROM}/web/views/test_page.py" = "./web/views/test_page.py"
+"{FROM}/web/elements/panel.py" = "./web/elements/panel.py"
+"{SENZA}/senza/router.py" = "./senza/router.py"
+"{SENZA}/senza/visibility.py" = "./senza/visibility.py"

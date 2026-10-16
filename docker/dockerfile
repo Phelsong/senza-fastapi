@@ -2,11 +2,11 @@ FROM python:latest AS python_dev
 
 WORKDIR /opt/website
 
-RUN apt get python-poetry
+RUN apt get pixi
 
 COPY ../pyproject.toml .
 
 EXPOSE 8062
 
 RUN poetry install
-CMD [ "poetry", "run start" ]
+CMD [ "pixi", "run start" ]

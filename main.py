@@ -1,13 +1,17 @@
 # libs
 import os
-from uvicorn import Server as UV_SERVER, Config as UV_CONFIG
-from fastapi import FastAPI, WebSocket
+from pathlib import Path
+
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
+from uvicorn import Config as UV_CONFIG
+from uvicorn import Server as UV_SERVER
 
 # imports
 from routers.nav import nav
+from routers.pyscript_source import pyscript_source
 
 # from fast_socket import websocket_endpoint
 
@@ -38,7 +42,7 @@ match site_env:
 server: UV_SERVER = UV_SERVER(server_config)
 
 
-app = FastAPI(root_path=".")
+app = FastAPI()
 origins: list[str] = [
     "http://localhost",
     "http://127.0.0.1",
@@ -57,18 +61,16 @@ app.add_middleware(
 # ---------------------------------------------------------
 
 app.mount(path="/public", app=StaticFiles(directory="public"), name="public")
-app.mount(
-    path="/senza",
-    app=StaticFiles(directory="senza"),
-    name="senza",
-)
-app.mount(
-    path="/web",
-    app=StaticFiles(directory="web"),
-    name="web",
-)
-# ---------------------------------------------------------
+# self-hosted pyodide / LSP sources, downloaded by senza/utils scripts
+Path("packages").mkdir(exist_ok=True)
 app.include_router(nav)
+app.include_router(pyscript_source)
+app.mount(path="/packages", app=StaticFiles(directory="packages"), name="packages")
+# ---------------------------------------------------------
+# NOTE: `/senza` and `/web` are intentionally NOT mounted as static files.
+# Browser code is served (and thus allow-listed) by routers/pyscript_source.py
+app.include_router(nav)
+app.include_router(pyscript_source)
 # ---------------------------------------------------------
 
 
@@ -77,50 +79,18 @@ def get_status() -> dict[str, str]:
     return {"status": "ok"}
 
 
-# @app.get("/favicon.ico")
-# def get_favicon() -> FileResponse:
-#     return FileResponse(path="public/favicon.ico", status_code=200)
-
-
-@app.get("/")
-def get_home() -> HTMLResponse:
-    html: str = """
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- ============================================================ -->
-    <link defer rel="stylesheet" href="/public/index.css" />
-    <link defer rel="stylesheet" href="https://pyscript.net/releases/2024.8.1/core.css">
-    <script async defer type="module" src="https://pyscript.net/releases/2024.8.1/core.js"></script>
-    <!-- ============================================================ -->
-    <title>Pyscript App</title>
-  </head>
-  <body>
-    <!-- ============================================================ -->
-   <script async type='py' src='/web/app.py' config='/web/config.toml'></script>
-        </body>
-        </html>
-    """
-    return HTMLResponse(html, status_code=200)
-
-
 # ------------------------------------------------------------------------------
 
 
 @app.websocket("/ws")
 async def ws_test(websocket: WebSocket):
     await websocket.accept()
-    while True:
-        # data = await websocket.receive_text()
-        # await websocket.send_text(data)
-        #
-        # data = await websocket.receive_json()
-        # await websocket.send_json(data)
-        #
-        data = await websocket.receive_bytes()
-        await websocket.send_bytes(data)
+    try:
+        while True:
+            data = await websocket.receive_bytes()
+            await websocket.send_bytes(data)
+    except WebSocketDisconnect:
+        pass  # client went away; nothing to clean up
 
 
 if __name__ == "__main__":

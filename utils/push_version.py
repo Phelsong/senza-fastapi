@@ -1,7 +1,8 @@
 import os
 import tomllib
-from tomli_w import dump
 from pathlib import Path
+
+from tomli_w import dump
 
 
 def load_config(path: str) -> dict:
@@ -28,8 +29,9 @@ def push_revision_task(config: dict) -> dict:
 
 def push_revision() -> None:
     """takes command line args for the env"""
-    from utils import project_root
     import sys
+
+    from utils import project_root
 
     p_env = sys.argv[1] if len(sys.argv) > 1 else "dev"
     config_dir = Path(f"{project_root}/config/web_config")
@@ -66,8 +68,9 @@ def push_minor_version_task():
 
 def push_minor_version() -> None:
     """takes command line args for the env"""
-    from utils import project_root
     import sys
+
+    from utils import project_root
 
     p_env = sys.argv[1]
     config_dir = Path(f"{project_root}/config/web_config")
@@ -104,8 +107,9 @@ def push_major_version_task():
 
 def push_major_version() -> None:
     """takes command line args for the env"""
-    from utils import project_root
     import sys
+
+    from utils import project_root
 
     p_env = sys.argv[1]
     config_dir = Path(f"{project_root}/config/web_config")

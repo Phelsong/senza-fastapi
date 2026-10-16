@@ -1,61 +1,72 @@
-from pyscript import when
-from pyscript.web import Element
-from senza.components import Div, Button
-from senza.websocket import SenzaSocket
+"""A demo view: composition + events with pyscript.web, sockets with
+pyscript.WebSocket. Views return the element the router should display.
+
+Note on listeners: pyscript invokes event listeners synchronously and discards
+coroutine objects, so handlers here must be plain sync functions.
+"""
+
+from pyscript import WebSocket, web, window
+
+CONTENT = "hello world"
 
 
-async def test_page(parent: Element) -> Div:
-    """test"""
+def _socket_url() -> str:
+    """ws:// or wss:// for this origin, matching the page protocol."""
+    scheme = "wss" if window.location.protocol == "https:" else "ws"
+    return f"{scheme}://{window.location.host}/ws"
 
-    test_container = Div(parent, "test-div", inner_text="hello world")
 
-    send_button = Button(test_container, "ws-button")
-    stop_button = Button(test_container, "ws-stop-button")
+def test_page() -> web.div:
+    container = web.div(classes=["test-page"])
 
-    url = "wss://local.dev:8062/ws"
-    ws = SenzaSocket(url)
+    out = web.p("socket idle", id="ws-output")
+    ws = WebSocket(url=_socket_url())
 
-    # @when("mousedown", send_button)
-    # async def button_receive_text(event):
-    #     await ws.send_text(f"hello world x{x}")
-    #     print(await ws.receive_text())
+    def socket_open(event) -> None:
+        out.textContent = "socket open — ready to send"
 
-    # @when("mousedown", send_button)
-    # async def button_iter_text(event):
+    def socket_closed(event) -> None:
+        out.textContent = f"socket closed (code {event.code})"
 
-    #     for x in range(10):
-    #         await ws.send_text(f"hello world x{x}")
-    #     async for y in ws.iter_text():
-    #         print(y)
+    def socket_error(event) -> None:
+        out.textContent = "socket error — check the server is running"
 
-    # @when("mousedown", send_button)
-    # async def button_receive_json(event):
-    #     await ws.send_json({"hello": "world"})
-    #     print(await ws.receive_json())
+    def on_message(event) -> None:
+        data = event.data  # str for text frames, memoryview for binary frames
+        text = bytes(data).decode() if not isinstance(data, str) else data
+        out.textContent = f"received: {text}"
 
-    # @when("mousedown", send_button)
-    # async def button_iter_json(event):
-
-    #     for x in range(10):
-    #         await ws.send_json({"hello_world": f"{x}"})
-    #     async for y in ws.iter_json():
-    #         print(y)
-
-    # @when("mousedown", send_button)
-    # async def button_receive_bytes(event):
-    #     await ws.send_bytes(b"hello world")
-    #     print(str(await ws.receive_bytes()))
-
-    @when("mousedown", send_button)
-    async def button_iter_bytes(event):
-
+    def send_frames(event) -> None:
+        if ws.readyState != ws.OPEN:
+            out.textContent = "socket not open yet — try again in a moment"
+            return
         for x in range(10):
-            await ws.send_bytes(b"hello world")
-        async for y in ws.iter_bytes():
-            print(str(y))
+            ws.send(f"{CONTENT} x{x}".encode())  # binary frames -> /ws echoes bytes
+        out.textContent = "sent 10 frames"
 
-    @when("mousedown", stop_button)
-    async def stop_button(event):
-        await ws.close()
+    def close_socket(event) -> None:
+        if ws.readyState == ws.OPEN:
+            ws.close(code=1000, reason="demo done")
+        else:
+            out.textContent = "socket already closed"
 
-    return test_container
+    ws.onopen = socket_open
+    ws.onmessage = on_message
+    ws.onclose = socket_closed
+    ws.onerror = socket_error
+
+    container.append(
+        web.h2("Test Page"),
+        web.p(
+            "This page is a plain function composing pyscript.web elements — no "
+            "wrapper classes, no boilerplate.",
+            classes=["muted"],
+        ),
+        web.div(
+            web.button("send 10 frames", on_click=send_frames, classes=["btn"]),
+            web.button("close socket", on_click=close_socket, classes=["btn"]),
+            out,
+            id="ws-demo",
+        ),
+    )
+    return container

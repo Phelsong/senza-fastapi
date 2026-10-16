@@ -1,16 +1,8 @@
 # libs
-# import libsql_client as turso
-from fastapi import APIRouter, Query
-import os
-from typing import Annotated
+from fastapi import APIRouter
+from fastapi.responses import HTMLResponse
 
-# from fastapi.middlewares.session import SessionMiddleware
-from fastapi.responses import (
-    HTMLResponse,
-    RedirectResponse,
-    ORJSONResponse,
-)
-from pydantic import BaseModel, HttpUrl, Strict, AnyHttpUrl
+from utils.pyscript_release import shell_html
 
 # imports
 
@@ -19,45 +11,32 @@ from pydantic import BaseModel, HttpUrl, Strict, AnyHttpUrl
 
 nav = APIRouter(
     prefix="",
-    tags=["site elements and redirects"],
+    tags=["page shells"],
     responses={404: {"description": "Not found"}},
 )
 
-SITE_ENV = os.environ["SITE_ENV"] if os.environ.get("SITE_ENV") else "development"
-
 # =============================================================================
+# Every page served by the backend renders the same pyscript shell: one pinned
+# runtime, one entry script (`web/app.py`). The server-side route makes the URL
+# shareable/deep-linkable; the client-side router in `senza/router.py` handles
+# in-app navigation without reloads.
+
+
+@nav.get("/", response_class=HTMLResponse)
+def home() -> HTMLResponse:
+    return HTMLResponse(shell_html("Pyscript App"), status_code=200)
+
+
+@nav.get("/hello", response_class=HTMLResponse)
+def hello_page() -> HTMLResponse:
+    return HTMLResponse(shell_html("Hello World"), status_code=200)
+
+
+@nav.get("/test_page", response_class=HTMLResponse)
+def test_page_view() -> HTMLResponse:
+    return HTMLResponse(shell_html("WebSocket Demo"), status_code=200)
 
 
 @nav.get("/about", response_class=HTMLResponse)
-async def dashboard() -> HTMLResponse:
-    html = """
-<!DOCTYPE pyscript>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- ================================================================================== -->
-    <link
-      rel="stylesheet"
-      href="https://pyscript.net/releases/2024.6.1/core.css"
-    />
-    <script
-      type="module"
-      src="https://pyscript.net/releases/2024.6.1/core.js"
-    ></script>
-    <link rel="stylesheet" href="/public/index.css" />
-    <!-- ================================================================================== -->
-    <title>BASE</title>
-  </head>
-  <body>
-    <!-- ==================================================== -->
-    <script
-      type="py"
-      src="/web/app.py"
-      config="/web/config/config.toml"
-    ></script>
-  </body>
-</html>
-"""
-    return HTMLResponse(html, media_type="text/html", status_code=200)
+def about() -> HTMLResponse:
+    return HTMLResponse(shell_html("About"), status_code=200)

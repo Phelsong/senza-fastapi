@@ -1,8 +1,0 @@
-[submodule "senza"]
-	path = senza
-	url = https://github.com/Phelsong/Senza.git
-
-[submodule "pyscript"]
-	path = build/pyscript
-	url = https://github.com/pyscript/pyscript.git
-	branch = main

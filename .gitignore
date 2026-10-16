@@ -1,6 +1,7 @@
 #custom
 svg2.py
 /certs
+./pyscript
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -166,3 +167,11 @@ cython_debug/
 # pixi environments
 .pixi/*
 !.pixi/config.toml
+
+# downloaded pyodide/LSP artifacts (sync_pyodide / sync_pyscript_lsp)
+packages/
+dist/
+
+# senza core lives in ../senza (pixi task: sync-senza); the local senza/ copy is workspace-only
+senza/
+pyscript

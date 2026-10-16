@@ -1,4 +1,5 @@
 [tool.poetry]
+license = "AGPL-3.0-or-later"
 name = "senza-fastapi"
 version = "0.1.0"
 description = "fast-api bootstrap for senza"
@@ -21,11 +22,6 @@ tomli-w = "^1.0.0"
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
-[tool.poetry.scripts]
-start = 'main:server.run'
-compile_sass = 'scripts.compile_sass:compile_sass'
-compile_pyscript = 'scripts.compile_pyscript:compile_pyscript'
-
 [tool.pixi.workspace]
 channels = ["conda-forge"]
 platforms = ["linux-64"]
@@ -35,5 +31,29 @@ senza-fastapi = { path = ".", editable = true }
 
 [tool.pixi.tasks]
 start = "python main.py"
-compile_sass = "sass ./sass/index.sass ./public/index.css"
-compile_pyscript = "python scripts/compile_pyscript.py"
+package-boilerplate = "python scripts/package_boilerplate.py"
+upstream-senza = "python scripts/upstream_senza.py"
+format = "isort ./senza ./web ./routers main.py;black ."
+# senza core scripts
+sync-config = "python senza/scripts/sync_web_config.py ."
+sync-senza = "python senza/scripts/sync_senza.py ."
+compile-dist = "python senza/scripts/compile_dist.py ."
+compile_sass = { cmd = 'python senza/scripts/compile_sass.py {{ source }} {{ out }}', args = [
+  { arg = "source", default = "sass/index.scss" },
+  { arg = "out", default = "public/index.css" },
+] }
+sync-pyodide = "python senza/scripts/sync_pyodide.py status"
+sync-pyodide-check = "python senza/scripts/sync_pyodide.py check"
+sync-pyodide-latest = "python senza/scripts/sync_pyodide.py latest"
+sync-pyodide-pin = { cmd = "python senza/scripts/sync_pyodide.py pin {{ version }}", args = [
+  { arg = "version", default = "latest" },
+] }
+sync-pyodide-download = { cmd = "python senza/scripts/sync_pyodide.py download {{ version }}", args = [
+  { arg = "version", default = "" },
+] }
+sync-pyodide-download-core = "python senza/scripts/sync_pyodide.py download --core"
+sync-lsp = "python senza/scripts/sync_pyscript_lsp.py ."
+pyscript-check = "python senza/releases.py check --root ."
+pyscript-pin = { cmd = "python senza/releases.py pin {{ version }} --root .", args = [
+  { arg = "version", default = "latest" },
+] }
